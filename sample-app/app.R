@@ -8,12 +8,13 @@
 #
 
 library(shiny)
+library(ggplot2)
 
 # Define UI for application that draws a histogram
 ui <- fluidPage(
    
    # Application title
-   titlePanel("Old Faithful Geyser Data"),
+   titlePanel("ggplot2 histogram"),
    
    # Sidebar with a slider input for number of bins 
    sidebarLayout(
@@ -23,17 +24,10 @@ ui <- fluidPage(
                      min = 1,
                      max = 50,
                      value = 30),
-         tags$hr(),
-         sliderInput("test",
-                     "This does nothing:",
-                     min = 0,
-                     max = 1,
-                     value = 0.5,
-                     step = 0.01,
-                     animate = TRUE,
-                     pre = "$"),
-         dateInput("data",
-                   "")
+         hr(),
+         selectInput("color",
+                     "Pick a fill color:",
+                     list("red", "green", "blue"))
       ),
       
       # Show a plot of the generated distribution
@@ -46,21 +40,21 @@ ui <- fluidPage(
 
 # Define server logic required to draw a histogram
 server <- function(input, output) {
+  
    
    output$distPlot <- renderPlot({
       # generate bins based on input$bins from ui.R
-      x    <- faithful[, 2] 
-      bins <- seq(min(x), max(x), length.out = input$bins + 1)
-      
-      # draw the histogram with the specified number of bins
-      hist(x, breaks = bins, col = 'darkgray', border = 'white')
-      
-    output$text <- renderText({c("The text you have selected is",
-                                 input$test,
-                                 "date is",
-                                 input$data)}, quoted = TRUE)
-      
+      ggplot(mtcars) +
+       geom_histogram(aes(mpg), fill = input$color, bins = input$bins)
    })
+      
+   output$text <- renderText({paste("You have created a ggplot histogram with",
+                                 input$bins,
+                                 "bins and",
+                                 input$color,
+                                 "fill color")})
+   
+   
 }
 
 # Run the application 
