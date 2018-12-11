@@ -25,15 +25,18 @@ ui <- fluidPage(
                      max = 50,
                      value = 30),
          hr(),
-         selectInput("color",
+         selectizeInput("color",
                      "Pick a fill color:",
-                     list("red", "green", "blue"))
+                     list("red" , "green" , "blue"),
+                     options = list(create = TRUE)),
+         helpText("Hint: You can add your own colors! Try 'tomato' or #FFF456")
       ),
       
       # Show a plot of the generated distribution
       mainPanel(
          plotOutput("distPlot"),
          textOutput("text")
+         
       )
    )
 )
@@ -45,7 +48,8 @@ server <- function(input, output) {
    output$distPlot <- renderPlot({
       # generate bins based on input$bins from ui.R
       ggplot(mtcars) +
-       geom_histogram(aes(mpg), fill = input$color, bins = input$bins)
+       geom_histogram(aes(mpg), fill = input$color, bins = input$bins) +
+       labs(x = "Miles per gallon", y = "Count")
    })
       
    output$text <- renderText({paste("You have created a ggplot histogram with",
